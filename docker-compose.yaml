@@ -1,3 +1,4 @@
+name: path-of-the-python
 services:
   web:
     build: .
