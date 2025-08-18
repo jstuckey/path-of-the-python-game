@@ -15,3 +15,8 @@ of the game is to find the Golden Python at the end. Mention that in the introdu
 @app.get("/")
 def read_root():
     return "Path of the Python"
+
+@app.post("/games")
+async def create_game():
+    response = await openai_client.responses.create(model=MODEL, input=FIRST_PROMPT)
+    return { "reply": response.output_text }
