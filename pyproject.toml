@@ -8,5 +8,5 @@ authors = [
 requires-python = ">=3.13"
 dependencies = [
   "fastapi[standard]",
-  "openapi>=2.0.0",
+  "openai>=1.99.9",
 ]

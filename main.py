@@ -1,7 +1,10 @@
 from fastapi import FastAPI
+from openai import AsyncOpenAI
 
 app = FastAPI()
+openai_client = AsyncOpenAI()
 
+MODEL = "gpt-4o-mini"
 FIRST_PROMPT = """
 I want to play a text-based adventure game similar to Colossal Cave Adventure,
 but this game is called Path of the Python. Start by saying "You are in a maze
