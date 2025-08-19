@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from openai import AsyncOpenAI
 import redis
 import os
+import uuid
 
 app = FastAPI()
 
@@ -35,5 +36,13 @@ def read_root():
 
 @app.post("/games")
 async def create_game():
-    response = await openai_client.responses.create(model=MODEL, input=FIRST_PROMPT)
-    return { "reply": response.output_text }
+    game_id = str(uuid.uuid4())
+    response = await openai_client.responses.create(
+        model=MODEL,
+        instructions=INSTRUCTIONS,
+        input=FIRST_PROMPT
+    )
+
+    redis_client.set(game_id, response.id)
+
+    return { "reply": response.output_text, "game_id": game_id, "turn_id": response.id }
