@@ -46,3 +46,21 @@ async def create_game():
     redis_client.set(game_id, response.id)
 
     return { "reply": response.output_text, "game_id": game_id, "turn_id": response.id }
+
+@app.post("/games/{game_id}/turn")
+async def take_turn(game_id: str, prompt: str):
+    previous_response_id = redis_client.get(game_id)
+
+    if not previous_response_id:
+        return { "error": "Game now found. Start a new game with POST /games" }
+
+    response = await openai_client.responses.create(
+        model=MODEL,
+        previous_response_id=previous_response_id,
+        instructions=INSTRUCTIONS,
+        input=prompt
+    )
+
+    redis_client.set(game_id, response.id)
+
+    return { "reply": response.output_text, "game_id": game_id, "turn_id": response.id }
