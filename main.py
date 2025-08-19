@@ -4,7 +4,6 @@ import redis
 import os
 
 app = FastAPI()
-openai_client = AsyncOpenAI()
 
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
@@ -18,12 +17,17 @@ redis_client = redis.Redis(
 )
 
 MODEL = "gpt-4o-mini"
-FIRST_PROMPT = """
-I want to play a text-based adventure game similar to Colossal Cave Adventure,
-but this game is called Path of the Python. Start by saying "You are in a maze
-of twisty little passages, all alike" and then ask me what I want to do. The goal
-of the game is to find the Golden Python at the end. Mention that in the introduction.
+INSTRUCTIONS = """
+You are generating a text-based adventure game similar to Colossal Cave Adventure.
+The game is called Path of the Python. The goal is to find the Golden Python at the end.
+The tone of the game should be mysterious and exciting.
 """
+FIRST_PROMPT = """
+Start by saying "You are in a maze of twisty little passages, all alike".
+Explain the goal of the game. Describe the initial setting and ask what the user wants to do.
+"""
+
+openai_client = AsyncOpenAI()
 
 @app.get("/")
 def read_root():
