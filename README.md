@@ -9,11 +9,22 @@ The goal is to explore the following technologies:
 - React
 - AI integration
 
-
-## Running locally
+## Run locally
 
 ```
 docker-compose up --build
 
 Navigate to http://localhost:8000
+```
+
+## Lint
+
+```
+docker exec -it path-of-the-python-web-1 uv run ruff check .
+```
+
+## Test
+
+```
+docker exec -it path-of-the-python-web-1 uv run pytest
 ```
