@@ -10,4 +10,5 @@ RUN uv sync
 
 COPY . .
 
-CMD ["uv", "run", "fastapi", "dev", "--host", "0.0.0.0", "main.py"]
+ENTRYPOINT ["uv", "run"]
+CMD ["fastapi", "dev", "--host", "0.0.0.0", "main.py"]
