@@ -1,5 +1,4 @@
 *.sw*
 __pycache__
-main.py
 .env
 .vscode/
