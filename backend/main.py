@@ -4,6 +4,7 @@ from openai import AsyncOpenAI
 import redis
 import os
 import uuid
+from types import SimpleNamespace
 
 app = FastAPI()
 
@@ -40,6 +41,10 @@ Explain the goal of the game. Describe the initial setting and ask what the user
 
 openai_client = AsyncOpenAI()
 
+TEST_MODE = os.getenv("TEST_MODE", "false").lower() == "true"
+TEST_FIRST_PROMPT =  "You are in a maze of twisty little passages, all alike. What next?"
+TEST_REPLY =  "You do a thing. What next?"
+
 @app.get("/")
 def read_root():
     return "Path of the Python"
@@ -47,11 +52,15 @@ def read_root():
 @app.post("/games")
 async def create_game():
     game_id = str(uuid.uuid4())
-    response = await openai_client.responses.create(
-        model=MODEL,
-        instructions=INSTRUCTIONS,
-        input=FIRST_PROMPT
-    )
+
+    if TEST_MODE:
+        response = SimpleNamespace(output_text=TEST_FIRST_PROMPT, id=str(uuid.uuid4()))
+    else:
+        response = await openai_client.responses.create(
+            model=MODEL,
+            instructions=INSTRUCTIONS,
+            input=FIRST_PROMPT
+        )
 
     redis_client.set(game_id, response.id)
 
@@ -64,12 +73,15 @@ async def take_turn(game_id: str, prompt: str):
     if not previous_response_id:
         raise HTTPException(status_code=404, detail="Game not found. Start a new game with POST /games")
 
-    response = await openai_client.responses.create(
-        model=MODEL,
-        previous_response_id=previous_response_id,
-        instructions=INSTRUCTIONS,
-        input=prompt
-    )
+    if TEST_MODE:
+        response = SimpleNamespace(output_text=TEST_REPLY, id=str(uuid.uuid4()))
+    else:
+        response = await openai_client.responses.create(
+            model=MODEL,
+            previous_response_id=previous_response_id,
+            instructions=INSTRUCTIONS,
+            input=prompt
+        )
 
     redis_client.set(game_id, response.id)
 
