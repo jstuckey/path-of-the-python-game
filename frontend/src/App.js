@@ -1,23 +1,32 @@
-import logo from './logo.svg';
 import './App.css';
+import React, { useState } from 'react';
 
 function App() {
+  const backendUrl = process.env.REACT_APP_BACKEND_URL
+
+  const [gameData, setGameData] = useState(null);
+
+  const handleNewGame = async () => {
+    const response = await fetch(`${backendUrl}/games`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    })
+    const data = await response.json();
+    console.log(data)
+    setGameData(data)
+  }
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Path of the Python</h1>
+      <button onClick={handleNewGame}>New Game</button>
+      {gameData && (
+        <div id="game">
+          <p>{gameData.reply}</p>
+          <textarea placeholder="What would you like to do?"></textarea>
+        </div>
+      )}
     </div>
   );
 }
