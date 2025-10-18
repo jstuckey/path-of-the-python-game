@@ -5,17 +5,29 @@ function App() {
   const backendUrl = process.env.REACT_APP_BACKEND_URL
 
   const [gameData, setGameData] = useState(null);
+  const [prompt, setPrompt] = useState("");
 
   const handleNewGame = async () => {
     const response = await fetch(`${backendUrl}/games`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
     })
+
     const data = await response.json();
     console.log(data)
     setGameData(data)
   }
 
+  const handleSubmitPrompt = async (e) => {
+    e.preventDefault();
+    if (!prompt) return;
+
+    const response = await fetch(`${backendUrl}/games/${gameData.game_id}/turn?prompt=${prompt}`, { method: 'POST' });
+
+    const data = await response.json();
+    setGameData(data);
+    setPrompt("");
+  }
 
   return (
     <div className="App">
@@ -24,7 +36,14 @@ function App() {
       {gameData && (
         <div id="game">
           <p>{gameData.reply}</p>
-          <textarea placeholder="What would you like to do?"></textarea>
+          <form onSubmit={handleSubmitPrompt}>
+            <textarea
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="What would you like to do?"
+            ></textarea>
+            <button type="submit">Submit</button>
+          </form>
         </div>
       )}
     </div>
