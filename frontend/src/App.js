@@ -32,10 +32,12 @@ function App() {
   return (
     <div className="App">
       <h1>Path of the Python</h1>
-      <button onClick={handleNewGame}>New Game</button>
+      <div className="header-controls">
+        <button onClick={handleNewGame}>New Game</button>
+      </div>
       {gameData && (
         <div id="game">
-          <p>{gameData.reply}</p>
+          <p id="game-text" key={gameData.turn_id}>{gameData.reply}</p>
           <form onSubmit={handleSubmitPrompt}>
             <textarea
               value={prompt}

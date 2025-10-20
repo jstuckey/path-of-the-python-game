@@ -1,38 +1,101 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", Roboto, sans-serif;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+}
+
 .App {
+  max-width: 1200px;
+  min-width: 600px;
+  width: 80%;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #252526;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+}
+
+h1 {
+  font-size: 4em;
+  color: #ffffff;
+  margin-bottom: 20px;
   text-align: center;
+  font-family: 'Moot Jungle', sans-serif;
+  text-shadow: 0 0 6px rgba(0, 255, 128, 0.3);
+  letter-spacing: 1px;
+  animation: fadeIn 1s ease-out;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+@font-face {
+  font-family: 'Moot Jungle';
+  src: url('../public/fonts/MootJungle.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+button {
+  background-color: rgba(0, 255, 128, 0.3);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 4px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 0 0px rgba(0, 120, 212, 0.6);
+}
+
+button:hover {
+  background-color: rgba(0, 255, 128, 0.4);
+  box-shadow: 0 0 8px rgba(0, 120, 212, 0.8);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+.header-controls {
+  display: flex;
+  justify-content: center;
+  margin: 16px 0;
+}
+
+#game-text {
+  font-size: 1.1em;
+  margin-bottom: 16px;
+  animation: fadeIn 1s ease-out;
+}
+
+form {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  gap: 12px;
 }
 
-.App-link {
-  color: #61dafb;
+textarea {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  border: 1px solid #3c3c3c;
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 1em;
+  resize: vertical;
+  min-height: 80px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+textarea::placeholder {
+  color: #888;
+}
+
+textarea:focus {
+  border-color: #0078d4;
+  box-shadow: 0 0 6px rgba(0, 120, 212, 0.6);
+  outline: none;
 }
