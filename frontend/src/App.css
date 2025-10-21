@@ -88,6 +88,18 @@ button:disabled, button[disabled] {
   text-align: right;
 }
 
+@keyframes pulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.waiting {
+  display: inline-block;
+  transform-origin: center center;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
 .role-label {
   font-size: 0.9em;
   color: #888;

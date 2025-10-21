@@ -13,6 +13,10 @@ function App() {
   const textareaRef = useRef(null);
 
   const handleNewGame = async () => {
+    setGameId('waiting')
+    setMessages([{ id: 'waiting', role: 'waiting', text: '...' }])
+    setIsSubmitting(true);
+
     const response = await fetch(`${backendUrl}/games`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
@@ -21,6 +25,7 @@ function App() {
     const data = await response.json();
     setGameId(data.game_id)
     setMessages([{ id: data.turn_id, role: 'game', text: data.reply }])
+    setIsSubmitting(false);
   }
 
   const handleSubmitPrompt = async (e) => {
@@ -32,6 +37,9 @@ function App() {
     const playerMessage = { id: playerTurnId, role: 'player', text: playerPrompt };
     setMessages((currentMessages) => [...currentMessages, playerMessage]);
 
+    const waitingMessage = { id: 'waiting', role: 'waiting', text: '...' };
+    setMessages((currentMessages) => [...currentMessages, waitingMessage]);
+
     setIsSubmitting(true);
     setPrompt("");
 
@@ -39,7 +47,7 @@ function App() {
     const data = await response.json();
 
     const gameMessage = { id: data.turn_id, role: 'game', text: data.reply };
-    setMessages((currentMessages) => [...currentMessages, gameMessage]);
+    setMessages((currentMessages) => [...currentMessages.slice(0, -1), gameMessage]);
 
     setIsSubmitting(false);
     textareaRef.current?.focus();
