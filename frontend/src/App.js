@@ -10,7 +10,7 @@ function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const newGameButtonRef = useRef(null);
-  const textareaRef = useRef(null);
+  const inputRef = useRef(null);
 
   const handleNewGame = async () => {
     setGameId('waiting')
@@ -50,7 +50,7 @@ function App() {
     setMessages((currentMessages) => [...currentMessages.slice(0, -1), gameMessage]);
 
     setIsSubmitting(false);
-    textareaRef.current?.focus();
+    inputRef.current?.focus();
   }
 
   useEffect(() => {
@@ -65,7 +65,7 @@ function App() {
     if (!gameId) return;
 
     requestAnimationFrame(() => {
-      textareaRef.current?.focus();
+      inputRef.current?.focus();
     });
   }, [gameId]);
 
@@ -92,12 +92,13 @@ function App() {
             ))}
           </div>
           <form onSubmit={handleSubmitPrompt}>
-            <textarea
-              ref={textareaRef}
+            <input
+              ref={inputRef}
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="What would you like to do?"
-            ></textarea>
+              type="text"
+            />
             <button type="submit" tabIndex={0} disabled={isSubmitting || !prompt}>Submit</button>
           </form>
         </div>
