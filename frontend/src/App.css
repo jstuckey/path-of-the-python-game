@@ -6,25 +6,25 @@ body {
 }
 
 .App {
-  max-width: 1200px;
-  min-width: 600px;
-  width: 80%;
-  margin: 40px auto;
-  padding: 20px;
   background-color: #252526;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+  margin: 40px auto;
+  max-width: 1200px;
+  min-width: 600px;
+  padding: 20px;
+  width: 80%;
 }
 
 h1 {
-  font-size: 4em;
+  animation: fadeIn 1s ease-out;
   color: #ffffff;
+  font-family: 'Moot Jungle', sans-serif;
+  font-size: 4em;
+  letter-spacing: 1px;
   margin: 20px;
   text-align: center;
-  font-family: 'Moot Jungle', sans-serif;
   text-shadow: 0 0 6px rgba(0, 255, 128, 0.3);
-  letter-spacing: 1px;
-  animation: fadeIn 1s ease-out;
 }
 
 @keyframes fadeIn {
@@ -50,9 +50,9 @@ h1 {
 }
 
 .message {
+  animation: fadeIn 1s ease-out;
   font-size: 1.1em;
   margin-bottom: 16px;
-  animation: fadeIn 1s ease-out;
 }
 
 .player {
@@ -66,14 +66,14 @@ h1 {
 }
 
 .waiting {
+  animation: pulse 1.2s ease-in-out infinite;
   display: inline-block;
   transform-origin: center center;
-  animation: pulse 1.2s ease-in-out infinite;
 }
 
 .role-label {
-  font-size: 0.9em;
   color: #888;
+  font-size: 0.9em;
   margin-bottom: 4px;
 }
 
@@ -83,38 +83,15 @@ form {
   gap: 12px;
 }
 
-input[type="text"] {
-  background-color: #1e1e1e;
-  color: #e0e0e0;
-  border: 1px solid #3c3c3c;
-  border-radius: 4px;
-  padding: 10px;
-  font-size: 1em;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  width: 100%;
-  box-sizing: border-box;
-  min-height: 44px;
-}
-
-input[type="text"]::placeholder {
-  color: #888;
-}
-
-input[type="text"]:focus {
-  border-color: rgba(223, 244, 3, 0.832);
-  box-shadow: 0 0 6px rgba(223, 244, 3, 0.832);
-  outline: none;
-}
-
 button {
   background-color: rgba(0, 255, 128, 0.3);
-  color: white;
-  padding: 10px 16px;
   border-radius: 4px;
-  font-size: 1em;
-  cursor: pointer;
-  transition: background-color 0.2s ease, box-shadow 0.3s ease;
   border: 1px solid #3c3c3c;
+  color: white;
+  cursor: pointer;
+  font-size: 1em;
+  padding: 10px 16px;
+  transition: background-color 0.2s ease, box-shadow 0.3s ease;
 }
 
 button:hover {
@@ -127,9 +104,32 @@ button:active {
 }
 
 button:disabled, button[disabled] {
-  opacity: 0.6;
-  cursor: not-allowed;
-  pointer-events: none;
   box-shadow: none;
+  cursor: not-allowed;
   filter: grayscale(0.05);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+input[type="text"] {
+  background-color: #1e1e1e;
+  border-radius: 4px;
+  border: 1px solid #3c3c3c;
+  box-sizing: border-box;
+  color: #e0e0e0;
+  font-size: 1em;
+  min-height: 44px;
+  padding: 10px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+}
+
+input[type="text"]::placeholder {
+  color: #888;
+}
+
+input[type="text"]:focus {
+  border-color: rgba(223, 244, 3, 0.832);
+  box-shadow: 0 0 6px rgba(223, 244, 3, 0.832);
+  outline: none;
 }
