@@ -39,35 +39,6 @@ h1 {
   font-style: normal;
 }
 
-button {
-  background-color: rgba(0, 255, 128, 0.3);
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 4px;
-  font-size: 1em;
-  cursor: pointer;
-  transition: background-color 0.2s ease, box-shadow 0.3s ease;
-  box-shadow: 0 0 0px rgba(0, 120, 212, 0.6);
-}
-
-button:hover {
-  background-color: rgba(0, 255, 128, 0.4);
-  box-shadow: 0 0 8px rgba(0, 120, 212, 0.8);
-}
-
-button:active {
-  transform: scale(0.98);
-}
-
-button:disabled, button[disabled] {
-  opacity: 0.6;
-  cursor: not-allowed;
-  pointer-events: none;
-  box-shadow: none;
-  filter: grayscale(0.05);
-}
-
 .header-controls {
   display: flex;
   justify-content: center;
@@ -130,7 +101,35 @@ input[type="text"]::placeholder {
 }
 
 input[type="text"]:focus {
-  border-color: #0078d4;
-  box-shadow: 0 0 6px rgba(0, 120, 212, 0.6);
+  border-color: rgba(223, 244, 3, 0.832);
+  box-shadow: 0 0 6px rgba(223, 244, 3, 0.832);
   outline: none;
+}
+
+button {
+  background-color: rgba(0, 255, 128, 0.3);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 4px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.3s ease;
+  border: 1px solid #3c3c3c;
+}
+
+button:hover {
+  background-color: rgba(0, 255, 128, 0.4);
+}
+
+button:active {
+  border-color: rgba(223, 244, 3, 0.832);
+  box-shadow: 0 0 6px rgba(223, 244, 3, 0.832);
+}
+
+button:disabled, button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+  box-shadow: none;
+  filter: grayscale(0.05);
 }
