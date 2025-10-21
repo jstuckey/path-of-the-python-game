@@ -56,22 +56,8 @@ h1 {
   scroll-behavior: smooth;
 }
 
-#messages.scrolled::before {
-  opacity: 1;
-}
-
 #messages::-webkit-scrollbar {
-  width: 5px;
-}
-
-#messages::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-#messages::-webkit-scrollbar-thumb {
-  background-color: rgba(100, 100, 100, 0.3);
-  border-radius: 6px;
-  border: 2px solid transparent;
+  display: none;
 }
 
 .message {
