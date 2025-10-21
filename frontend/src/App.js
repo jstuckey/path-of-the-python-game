@@ -10,6 +10,7 @@ function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const newGameButtonRef = useRef(null);
+  const messagesRef = useRef(null);
   const inputRef = useRef(null);
 
   const handleNewGame = async () => {
@@ -69,6 +70,13 @@ function App() {
     });
   }, [gameId]);
 
+  useEffect(() => {
+    const el = messagesRef.current;
+    if (!el) return;
+
+    el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+  }, [messages.at(-1)?.id]);
+
   return (
     <div className="App">
       <h1>Path of the Python</h1>
@@ -81,7 +89,7 @@ function App() {
       </div>
       {gameId && (
         <div id="game">
-          <div id="messages">
+          <div id="messages" ref={messagesRef}>
             {messages.map((msg) => (
               <div key={msg.id} className={`message ${msg.role}`}>
                 <div className="role-label">

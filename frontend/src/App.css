@@ -49,6 +49,29 @@ h1 {
 
 #messages {
   margin-bottom: 24px;
+  max-height: 60vh; 
+  overflow-y: auto;
+  padding-right: 8px; 
+  position: relative; 
+  scroll-behavior: smooth;
+}
+
+#messages.scrolled::before {
+  opacity: 1;
+}
+
+#messages::-webkit-scrollbar {
+  width: 5px;
+}
+
+#messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#messages::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 100, 100, 0.3);
+  border-radius: 6px;
+  border: 2px solid transparent;
 }
 
 .message {
@@ -70,7 +93,7 @@ h1 {
 .waiting {
   animation: pulse 1.2s ease-in-out infinite;
   display: inline-block;
-  transform-origin: center center;
+  transform-origin: center left;
 }
 
 .role-label {
