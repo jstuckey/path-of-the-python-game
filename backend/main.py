@@ -33,6 +33,7 @@ INSTRUCTIONS = """
 You are generating a text-based adventure game similar to Colossal Cave Adventure.
 The game is called Path of the Python. The goal is to find the Golden Python at the end.
 The tone of the game should be mysterious and exciting.
+Keep each response to about four sentences.
 """
 FIRST_PROMPT = """
 Start by saying "You are in a maze of twisty little passages, all alike".
