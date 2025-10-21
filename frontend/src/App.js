@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 function App() {
   const backendUrl = process.env.REACT_APP_BACKEND_URL
 
-  const [gameData, setGameData] = useState(null);
+  const [gameId, setGameId] = useState(null);
   const [prompt, setPrompt] = useState("");
   const textareaRef = useRef(null);
 
@@ -15,8 +15,7 @@ function App() {
     })
 
     const data = await response.json();
-    console.log(data)
-    setGameData(data)
+    setGameId(data.game_id)
   }
 
   const handleSubmitPrompt = async (e) => {
@@ -25,20 +24,21 @@ function App() {
 
     const response = await fetch(`${backendUrl}/games/${gameData.game_id}/turn?prompt=${prompt}`, { method: 'POST' });
 
+    const response = await fetch(`${backendUrl}/games/${gameId}/turn?prompt=${prompt}`, { method: 'POST' });
     const data = await response.json();
-    setGameData(data);
+    setGameId(data);
     setPrompt("");
 
     textareaRef.current?.focus();
   }
 
   useEffect(() => {
-    if (!gameData) return;
-    // ensure DOM is painted (use requestAnimationFrame to avoid timing issues with animations)
+    if (!gameId) return;
+
     requestAnimationFrame(() => {
       textareaRef.current?.focus();
     });
-  }, [gameData]);
+  }, [gameId]);
 
   return (
     <div className="App">
@@ -46,7 +46,7 @@ function App() {
       <div className="header-controls">
         <button onClick={handleNewGame} tabIndex={0}>New Game</button>
       </div>
-      {gameData && (
+      {gameId && (
         <div id="game">
           <p id="game-text" key={gameData.turn_id}>{gameData.reply}</p>
           <form onSubmit={handleSubmitPrompt}>
