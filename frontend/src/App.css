@@ -63,13 +63,27 @@ button:active {
 .header-controls {
   display: flex;
   justify-content: center;
-  margin: 16px 0;
+  margin: 16px 0 32px;
 }
 
-#game-text {
+#messages {
+  margin-bottom: 24px;
+}
+
+.message {
   font-size: 1.1em;
   margin-bottom: 16px;
   animation: fadeIn 1s ease-out;
+}
+
+.player {
+  text-align: right;
+}
+
+.role-label {
+  font-size: 0.9em;
+  color: #888;
+  margin-bottom: 4px;
 }
 
 form {

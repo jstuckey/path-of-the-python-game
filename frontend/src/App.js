@@ -6,6 +6,7 @@ function App() {
 
   const [gameId, setGameId] = useState(null);
   const [prompt, setPrompt] = useState("");
+  const [messages, setMessages] = useState([]); 
   const textareaRef = useRef(null);
 
   const handleNewGame = async () => {
@@ -16,17 +17,22 @@ function App() {
 
     const data = await response.json();
     setGameId(data.game_id)
+    setMessages([{ id: data.turn_id, role: 'game', text: data.reply }])
   }
 
   const handleSubmitPrompt = async (e) => {
     e.preventDefault();
     if (!prompt) return;
 
-    const response = await fetch(`${backendUrl}/games/${gameData.game_id}/turn?prompt=${prompt}`, { method: 'POST' });
+    const turnId = Date.now().toString();
+    var newMessage = { id: turnId, role: 'player', text: prompt }
+    setMessages((currentMessages) => [...currentMessages, newMessage]);
 
     const response = await fetch(`${backendUrl}/games/${gameId}/turn?prompt=${prompt}`, { method: 'POST' });
     const data = await response.json();
-    setGameId(data);
+
+    newMessage = { id: data.turn_id, role: 'game', text: data.reply }
+    setMessages((currentMessages) => [...currentMessages, newMessage]);
     setPrompt("");
 
     textareaRef.current?.focus();
@@ -48,7 +54,16 @@ function App() {
       </div>
       {gameId && (
         <div id="game">
-          <p id="game-text" key={gameData.turn_id}>{gameData.reply}</p>
+          <div id="messages">
+            {messages.map((msg) => (
+              <div key={msg.id} className={`message ${msg.role}`}>
+                <div className="role-label">
+                  <i>{msg.role === 'player' ? 'Player' : 'Mysterious Narrator'}</i>
+                </div>
+                {msg.text}
+              </div>
+            ))}
+          </div>
           <form onSubmit={handleSubmitPrompt}>
             <textarea
               ref={textareaRef}
