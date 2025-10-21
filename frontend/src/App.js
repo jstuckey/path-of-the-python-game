@@ -7,6 +7,7 @@ function App() {
   const [gameId, setGameId] = useState(null);
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState([]); 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const textareaRef = useRef(null);
 
   const handleNewGame = async () => {
@@ -24,17 +25,21 @@ function App() {
     e.preventDefault();
     if (!prompt) return;
 
-    const turnId = Date.now().toString();
-    var newMessage = { id: turnId, role: 'player', text: prompt }
-    setMessages((currentMessages) => [...currentMessages, newMessage]);
+    const playerTurnId = Date.now().toString();
+    const playerPrompt = prompt; 
+    const playerMessage = { id: playerTurnId, role: 'player', text: playerPrompt };
+    setMessages((currentMessages) => [...currentMessages, playerMessage]);
 
-    const response = await fetch(`${backendUrl}/games/${gameId}/turn?prompt=${prompt}`, { method: 'POST' });
-    const data = await response.json();
-
-    newMessage = { id: data.turn_id, role: 'game', text: data.reply }
-    setMessages((currentMessages) => [...currentMessages, newMessage]);
+    setIsSubmitting(true);
     setPrompt("");
 
+    const response = await fetch(`${backendUrl}/games/${gameId}/turn?prompt=${playerPrompt}`, { method: 'POST' });
+    const data = await response.json();
+
+    const gameMessage = { id: data.turn_id, role: 'game', text: data.reply };
+    setMessages((currentMessages) => [...currentMessages, gameMessage]);
+
+    setIsSubmitting(false);
     textareaRef.current?.focus();
   }
 
@@ -71,7 +76,7 @@ function App() {
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="What would you like to do?"
             ></textarea>
-            <button type="submit" tabIndex={0}>Submit</button>
+            <button type="submit" tabIndex={0} disabled={isSubmitting || !prompt}>Submit</button>
           </form>
         </div>
       )}
