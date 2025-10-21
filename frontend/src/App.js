@@ -33,7 +33,7 @@ function App() {
     <div className="App">
       <h1>Path of the Python</h1>
       <div className="header-controls">
-        <button onClick={handleNewGame}>New Game</button>
+        <button onClick={handleNewGame} tabIndex={0}>New Game</button>
       </div>
       {gameData && (
         <div id="game">
@@ -44,7 +44,7 @@ function App() {
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="What would you like to do?"
             ></textarea>
-            <button type="submit">Submit</button>
+            <button type="submit" tabIndex={0}>Submit</button>
           </form>
         </div>
       )}
