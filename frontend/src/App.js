@@ -8,6 +8,8 @@ function App() {
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState([]); 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const newGameButtonRef = useRef(null);
   const textareaRef = useRef(null);
 
   const handleNewGame = async () => {
@@ -44,6 +46,14 @@ function App() {
   }
 
   useEffect(() => {
+    if (gameId) return;
+
+    requestAnimationFrame(() => {
+      newGameButtonRef.current?.focus();
+    });
+  });
+
+  useEffect(() => {
     if (!gameId) return;
 
     requestAnimationFrame(() => {
@@ -55,7 +65,11 @@ function App() {
     <div className="App">
       <h1>Path of the Python</h1>
       <div className="header-controls">
-        <button onClick={handleNewGame} tabIndex={0}>New Game</button>
+        <button 
+          ref={newGameButtonRef}
+          onClick={handleNewGame} 
+          tabIndex={0}
+        >New Game</button>
       </div>
       {gameId && (
         <div id="game">
