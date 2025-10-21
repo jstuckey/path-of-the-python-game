@@ -1,11 +1,12 @@
 import './App.css';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 function App() {
   const backendUrl = process.env.REACT_APP_BACKEND_URL
 
   const [gameData, setGameData] = useState(null);
   const [prompt, setPrompt] = useState("");
+  const textareaRef = useRef(null);
 
   const handleNewGame = async () => {
     const response = await fetch(`${backendUrl}/games`, {
@@ -27,7 +28,17 @@ function App() {
     const data = await response.json();
     setGameData(data);
     setPrompt("");
+
+    textareaRef.current?.focus();
   }
+
+  useEffect(() => {
+    if (!gameData) return;
+    // ensure DOM is painted (use requestAnimationFrame to avoid timing issues with animations)
+    requestAnimationFrame(() => {
+      textareaRef.current?.focus();
+    });
+  }, [gameData]);
 
   return (
     <div className="App">
@@ -40,6 +51,7 @@ function App() {
           <p id="game-text" key={gameData.turn_id}>{gameData.reply}</p>
           <form onSubmit={handleSubmitPrompt}>
             <textarea
+              ref={textareaRef}
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="What would you like to do?"
