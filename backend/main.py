@@ -4,6 +4,7 @@ from openai import AsyncOpenAI
 import redis
 import os
 import uuid
+import time
 from types import SimpleNamespace
 
 app = FastAPI()
@@ -55,6 +56,7 @@ async def create_game():
     game_id = str(uuid.uuid4())
 
     if TEST_MODE:
+        time.sleep(2)
         response = SimpleNamespace(output_text=TEST_FIRST_PROMPT, id=str(uuid.uuid4()))
     else:
         response = await openai_client.responses.create(
@@ -75,6 +77,7 @@ async def take_turn(game_id: str, prompt: str):
         raise HTTPException(status_code=404, detail="Game not found. Start a new game with POST /games")
 
     if TEST_MODE:
+        time.sleep(2)
         response = SimpleNamespace(output_text=TEST_REPLY, id=str(uuid.uuid4()))
     else:
         response = await openai_client.responses.create(
