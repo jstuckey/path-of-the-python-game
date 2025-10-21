@@ -20,11 +20,13 @@ h1 {
   animation: fadeIn 1s ease-out;
   color: #ffffff;
   font-family: 'Moot Jungle', sans-serif;
-  font-size: 4em;
+  font-size: 5em;
+  font-style: italic;
+  font-weight: 100;
   letter-spacing: 1px;
   margin: 20px;
   text-align: center;
-  text-shadow: 0 0 6px rgba(0, 255, 128, 0.3);
+  text-shadow: 0 0 20px rgba(0, 255, 128, 1);
 }
 
 @keyframes fadeIn {
