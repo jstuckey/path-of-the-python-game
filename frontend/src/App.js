@@ -70,12 +70,14 @@ function App() {
     });
   }, [gameId]);
 
+  const lastMessageId = messages.at(-1)?.id;
+
   useEffect(() => {
     const el = messagesRef.current;
     if (!el) return;
 
     el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
-  }, [messages.at(-1)?.id]);
+  }, [lastMessageId]);
 
   return (
     <div className="App">
