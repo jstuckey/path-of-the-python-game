@@ -14,17 +14,33 @@ The goal is to explore the following technologies:
 ```
 docker-compose up --build
 
-Navigate to http://localhost:8000
+Navigate to http://localhost:8002
 ```
 
-## Lint
+## Backend
 
 ```
-docker exec -it path-of-the-python-web-1 uv run ruff check .
+# Lint
+
+docker exec -it path-of-the-python-backend-1 uv run ruff check .
 ```
 
-## Test
+```
+# Test
+
+docker exec -e AVOID_OPENAI_CALL=false -it path-of-the-python-backend-1 uv run pytest
+```
+
+## Frontend
 
 ```
-docker exec -it path-of-the-python-web-1 uv run pytest
+# Lint
+
+docker exec -it path-of-the-python-frontend-1 npm run lint
+```
+
+```
+# Test
+
+docker exec -it path-of-the-python-frontend-1 npm run test
 ```
