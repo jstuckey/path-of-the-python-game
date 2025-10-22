@@ -13,7 +13,7 @@ services:
       - REDIS_PORT=6379
       - REDIS_DB=0
       - FRONTEND_URL=http://localhost:8002
-      - TEST_MODE=true
+      - AVOID_OPENAI_CALLS=true
     depends_on:
       - redis
 

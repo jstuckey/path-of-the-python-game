@@ -43,7 +43,7 @@ Explain the goal of the game. Describe the initial setting and ask what the user
 
 openai_client = AsyncOpenAI()
 
-TEST_MODE = os.getenv("TEST_MODE", "false").lower() == "true"
+AVOID_OPENAI_CALLS = os.getenv("AVOID_OPENAI_CALLS", "false").lower() == "true"
 TEST_FIRST_PROMPT =  "You are in a maze of twisty little passages, all alike. What next?"
 TEST_REPLY =  "You do a thing. What next?"
 
@@ -55,7 +55,7 @@ def read_root():
 async def create_game():
     game_id = str(uuid.uuid4())
 
-    if TEST_MODE:
+    if AVOID_OPENAI_CALLS:
         time.sleep(2)
         response = SimpleNamespace(output_text=TEST_FIRST_PROMPT, id=str(uuid.uuid4()))
     else:
@@ -76,7 +76,7 @@ async def take_turn(game_id: str, prompt: str):
     if not previous_response_id:
         raise HTTPException(status_code=404, detail="Game not found. Start a new game with POST /games")
 
-    if TEST_MODE:
+    if AVOID_OPENAI_CALLS:
         time.sleep(2)
         response = SimpleNamespace(output_text=TEST_REPLY, id=str(uuid.uuid4()))
     else:
