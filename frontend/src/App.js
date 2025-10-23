@@ -6,7 +6,7 @@ function App() {
 
   const [gameId, setGameId] = useState(null);
   const [prompt, setPrompt] = useState("");
-  const [messages, setMessages] = useState([]); 
+  const [messages, setMessages] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const newGameButtonRef = useRef(null);
@@ -40,7 +40,7 @@ function App() {
     if (!prompt) return;
 
     const playerTurnId = Date.now().toString();
-    const playerPrompt = prompt; 
+    const playerPrompt = prompt;
     const playerMessage = { id: playerTurnId, role: 'player', text: playerPrompt };
     setMessages((currentMessages) => [...currentMessages, playerMessage]);
 
