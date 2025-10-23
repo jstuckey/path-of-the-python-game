@@ -9,6 +9,8 @@ The goal is to explore the following technologies:
 - React
 - AI integration
 
+![Screenshot](screenshot.jpg)
+
 ## Run locally
 
 ```
