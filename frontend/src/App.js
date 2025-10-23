@@ -10,6 +10,7 @@ function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const newGameButtonRef = useRef(null);
+  const resumeGameButtonRef = useRef(null);
   const messagesRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -27,6 +28,11 @@ function App() {
     setGameId(data.game_id)
     setMessages([{ id: data.turn_id, role: 'game', text: data.reply }])
     setIsSubmitting(false);
+  }
+
+  const handleResumeGame = async () => {
+    setGameId(localStorage.getItem('gameId'));
+    setMessages(JSON.parse(localStorage.getItem('messages')) || []);
   }
 
   const handleSubmitPrompt = async (e) => {
@@ -79,15 +85,33 @@ function App() {
     el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
   }, [lastMessageId]);
 
+  useEffect(() => {
+    console.log('Saving game state to localStorage', { gameId, messages });
+    if (gameId && gameId !== 'waiting') {
+      localStorage.setItem('gameId', gameId);
+      localStorage.setItem('messages', JSON.stringify(messages));
+    }
+  }, [gameId, messages]);
+
   return (
     <div className="App">
       <h1>Path of the Python</h1>
       <div className="header-controls">
-        <button 
-          ref={newGameButtonRef}
-          onClick={handleNewGame} 
-          tabIndex={0}
-        >New Game</button>
+        {!gameId && (
+          <button
+            ref={newGameButtonRef}
+            onClick={handleNewGame}
+            tabIndex={0}
+          >New Game</button>
+        )}
+
+        {!gameId &&  localStorage.getItem('gameId') && (
+          <button
+            ref={resumeGameButtonRef}
+            onClick={handleResumeGame}
+            tabIndex={0}
+          >Resume Game</button>
+        )}
       </div>
       {gameId && (
         <div id="game">
