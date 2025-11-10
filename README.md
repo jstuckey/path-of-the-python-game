@@ -24,13 +24,13 @@ Navigate to http://localhost:8002
 ```
 # Lint
 
-docker exec -it path-of-the-python-backend-1 uv run ruff check .
+docker compose run backend ruff check .
 ```
 
 ```
 # Test
 
-docker exec -e AVOID_OPENAI_CALL=false -it path-of-the-python-backend-1 uv run pytest
+docker compose run -e AVOID_OPENAI_CALLS=false backend pytest
 ```
 
 ## Frontend
@@ -38,11 +38,11 @@ docker exec -e AVOID_OPENAI_CALL=false -it path-of-the-python-backend-1 uv run p
 ```
 # Lint
 
-docker exec -it path-of-the-python-frontend-1 npm run lint
+docker compose run frontend npm run lint
 ```
 
 ```
 # Test
 
-docker exec -it path-of-the-python-frontend-1 npm run test
+docker compose run frontend npm run test
 ```
