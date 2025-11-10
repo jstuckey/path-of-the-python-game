@@ -31,6 +31,35 @@ def test_create_game(mock_openai, mock_redis):
     assert "game_id" in data
 
 @patch("main.redis_client")
+def test_get_game(mock_redis):
+    game_id = "test-game-id"
+
+    mock_redis.get.return_value = json.dumps({
+        "turn_id": "previous-response-id",
+        "messages": ["A mysterious thing happened."]
+    })
+
+    response = client.get(f"/games/{game_id}")
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["game_id"] == game_id
+    assert data["turn_id"] == "previous-response-id"
+    assert data["messages"] == ["A mysterious thing happened."]
+
+@patch("main.redis_client")
+def test_get_game_not_found(mock_redis):
+    game_id = "non-existent-game-id"
+
+    mock_redis.get.return_value = None
+
+    response = client.get(f"/games/{game_id}")
+
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] == "Game not found. Start a new game with POST /games"
+
+@patch("main.redis_client")
 @patch("main.openai_client", new_callable=AsyncMock)
 def test_take_turn(mock_openai, mock_redis):
     game_id = "test-game-id"
