@@ -1,6 +1,7 @@
 from fastapi.testclient import TestClient
 from unittest.mock import patch, AsyncMock, MagicMock
 from urllib.parse import quote
+import json
 from main import app
 
 client = TestClient(app)
@@ -31,9 +32,13 @@ def test_create_game(mock_openai, mock_redis):
 @patch("main.openai_client", new_callable=AsyncMock)
 def test_take_turn(mock_openai, mock_redis):
     game_id = "test-game-id"
-    prompt = quote("go north, my firend")
+    prompt = quote("go north, my friend")
 
-    mock_redis.get.return_value = "previous-response-id"
+    mock_redis.get.return_value = json.dumps({
+        "game_id": game_id,
+        "current_response_id": "previous-response-id",
+        "messages": ["A mysterious thing happened."]
+    })
     mock_redis.set.return_value = True
 
     mock_response = MagicMock()
