@@ -1,7 +1,9 @@
-from fastapi.testclient import TestClient
-from unittest.mock import patch, AsyncMock, MagicMock
-from urllib.parse import quote
 import json
+from unittest.mock import AsyncMock, MagicMock, patch
+from urllib.parse import quote
+
+from fastapi.testclient import TestClient
+
 from main import app
 
 client = TestClient(app)

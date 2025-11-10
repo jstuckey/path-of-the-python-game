@@ -1,12 +1,13 @@
+import json
+import os
+import time
+import uuid
+from types import SimpleNamespace
+
+import redis
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from openai import AsyncOpenAI
-from types import SimpleNamespace
-import os
-import json
-import redis
-import uuid
-import time
 
 app = FastAPI()
 
