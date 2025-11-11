@@ -69,9 +69,12 @@ async def create_game():
 
     game_state = {
         "turn_id": response.id,
-        "messages": [response.output_text]
+        "messages": [{
+            "id": response.id,
+            "role": "game",
+            "text": response.output_text
+        }]
     }
-
     redis_client.set(game_id, json.dumps(game_state))
 
     return { "reply": response.output_text, "game_id": game_id, "turn_id": response.id }
@@ -99,7 +102,7 @@ async def take_turn(game_id: str, prompt: str):
         raise HTTPException(status_code=404, detail="Game not found. Start a new game with POST /games")
 
     game_state = json.loads(serialized_game_state)
-    previous_response_id = game_state["current_response_id"]
+    previous_response_id = game_state["turn_id"]
 
     if AVOID_OPENAI_CALLS:
         time.sleep(2)
@@ -113,7 +116,16 @@ async def take_turn(game_id: str, prompt: str):
         )
 
     game_state["turn_id"] = response.id
-    game_state["messages"].append(response.output_text)
+    game_state["messages"].append({
+        "id": str(uuid.uuid4()),
+        "role": "player",
+        "text": prompt
+    })
+    game_state["messages"].append({
+        "id": response.id,
+        "role": "game",
+        "text": response.output_text
+    })
 
     redis_client.set(game_id, json.dumps(game_state))
 
