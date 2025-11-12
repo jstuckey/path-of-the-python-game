@@ -95,7 +95,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Path of the Python</h1>
+      <a href="/"><h1>Path of the Python</h1></a>
       <div className="header-controls">
         {!gameId && (
           <button
