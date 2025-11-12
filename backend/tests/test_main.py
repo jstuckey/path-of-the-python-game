@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from unittest.mock import ANY, patch
+from unittest.mock import ANY, patch, MagicMock
 from urllib.parse import quote
 
 from fastapi.testclient import TestClient

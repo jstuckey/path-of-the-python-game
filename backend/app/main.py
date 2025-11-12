@@ -4,7 +4,7 @@ import time
 import uuid
 from types import SimpleNamespace
 
-import redis
+import redis.asyncio as redis
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from openai import AsyncOpenAI
@@ -57,13 +57,13 @@ async def create_game():
             "text": response.text
         }]
     }
-    redis_client.set(game_id, json.dumps(game_state))
+    await redis_client.set(game_id, json.dumps(game_state))
 
     return { "reply": response.text, "game_id": game_id, "turn_id": response.id }
 
 @app.get("/games/{game_id}")
-def get_game(game_id: str):
-    serialized_game_state = redis_client.get(game_id)
+async def get_game(game_id: str):
+    serialized_game_state = await redis_client.get(game_id)
 
     if not serialized_game_state:
         raise HTTPException(status_code=404, detail="Game not found. Start a new game with POST /games")
@@ -78,7 +78,7 @@ def get_game(game_id: str):
 
 @app.post("/games/{game_id}/turn")
 async def take_turn(game_id: str, prompt: str):
-    serialized_game_state = redis_client.get(game_id)
+    serialized_game_state = await redis_client.get(game_id)
 
     if not serialized_game_state:
         raise HTTPException(status_code=404, detail="Game not found. Start a new game with POST /games")
@@ -100,6 +100,6 @@ async def take_turn(game_id: str, prompt: str):
         "text": response.text
     })
 
-    redis_client.set(game_id, json.dumps(game_state))
+    await redis_client.set(game_id, json.dumps(game_state))
 
     return { "reply": response.text, "game_id": game_id, "turn_id": response.id }
