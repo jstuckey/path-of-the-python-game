@@ -30,7 +30,7 @@ docker compose run backend ruff check .
 ```
 # Test
 
-docker compose run -e AVOID_OPENAI_CALLS=false backend pytest
+docker compose run backend pytest
 ```
 
 ## Frontend
