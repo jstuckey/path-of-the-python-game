@@ -1,6 +1,7 @@
 import asyncio
-from openai_game import OpenAIGame
 from unittest.mock import patch, AsyncMock, MagicMock
+
+from openai_game import OpenAIGame
 
 @patch("openai_game.OpenAIGame.openai_client", new_callable=AsyncMock)
 def test_start_game(mock_openai_client):
