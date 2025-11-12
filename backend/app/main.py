@@ -1,13 +1,10 @@
 import json
 import os
-import time
 import uuid
-from types import SimpleNamespace
 
 import redis.asyncio as redis
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from openai import AsyncOpenAI
 
 from fake_game import FakeGame
 from openai_game import OpenAIGame
@@ -33,8 +30,6 @@ redis_client = redis.Redis(
     db=REDIS_DB,
     decode_responses=True
 )
-
-openai_client = AsyncOpenAI()
 
 AVOID_OPENAI_CALLS = os.getenv("AVOID_OPENAI_CALLS", "false").lower() == "true"
 game = FakeGame() if AVOID_OPENAI_CALLS else OpenAIGame()

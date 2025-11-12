@@ -1,6 +1,5 @@
 import json
-from pathlib import Path
-from unittest.mock import ANY, patch, MagicMock
+from unittest.mock import ANY, patch 
 from urllib.parse import quote
 
 from fastapi.testclient import TestClient
@@ -117,7 +116,7 @@ def test_take_turn_saves_game_state(mock_redis):
     })
     mock_redis.set.return_value = True
 
-    response = client.post(f"/games/{game_id}/turn?prompt={prompt}")
+    client.post(f"/games/{game_id}/turn?prompt={prompt}")
 
     stored_data = json.loads(mock_redis.set.call_args[0][1])
 
