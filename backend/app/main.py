@@ -6,8 +6,8 @@ import redis.asyncio as redis
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from fake_game import FakeGame
-from openai_game import OpenAIGame
+from fake_storyteller import FakeStoryteller
+from openai_storyteller import OpenAIStoryteller
 
 app = FastAPI()
 
@@ -32,7 +32,7 @@ redis_client = redis.Redis(
 )
 
 AVOID_OPENAI_CALLS = os.getenv("AVOID_OPENAI_CALLS", "false").lower() == "true"
-game = FakeGame() if AVOID_OPENAI_CALLS else OpenAIGame()
+storyteller = FakeStoryteller() if AVOID_OPENAI_CALLS else OpenAIStoryteller()
 
 @app.get("/")
 def read_root():
@@ -42,7 +42,7 @@ def read_root():
 async def create_game():
     game_id = str(uuid.uuid4())
 
-    response = await game.start()
+    response = await storyteller.start()
 
     game_state = {
         "turn_id": response.id,
@@ -79,9 +79,9 @@ async def take_turn(game_id: str, prompt: str):
         raise HTTPException(status_code=404, detail="Game not found. Start a new game with POST /games")
 
     game_state = json.loads(serialized_game_state)
-    previous_response_id = game_state["turn_id"]
+    turn_id = game_state["turn_id"]
 
-    response = await game.take_turn(previous_response_id, prompt)
+    response = await storyteller.take_turn(turn_id, prompt)
 
     game_state["turn_id"] = response.id
     game_state["messages"].append({

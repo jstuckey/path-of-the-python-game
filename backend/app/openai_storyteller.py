@@ -2,7 +2,7 @@ from openai import AsyncOpenAI
 
 from game_response import GameResponse
 
-class OpenAIGame:
+class OpenAIStoryteller:
     MODEL = "gpt-4o-mini"
 
     INSTRUCTIONS = """

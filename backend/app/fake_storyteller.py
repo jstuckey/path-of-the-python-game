@@ -3,7 +3,7 @@ import time
 
 from game_response import GameResponse
 
-class FakeGame:
+class FakeStoryteller:
     ID = "fake-response-id"
     FIRST_REPLY = "You are in a maze of twisty little passages, all alike. What next?"
     REPLY = "You do a thing. What next?"
