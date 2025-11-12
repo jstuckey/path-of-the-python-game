@@ -1,5 +1,5 @@
 import json
-from unittest.mock import ANY, AsyncMock, MagicMock, patch
+from unittest.mock import ANY, patch
 from urllib.parse import quote
 
 from fastapi.testclient import TestClient
@@ -14,30 +14,18 @@ def test_read_root():
     assert response.json() == "Path of the Python"
 
 @patch("main.redis_client")
-@patch("main.openai_client", new_callable=AsyncMock)
-def test_create_game(mock_openai, mock_redis):
-    mock_response = MagicMock()
-    mock_response.output_text = "Welcome to the game!"
-    mock_response.id = "fake-response-id"
-    mock_openai.responses.create.return_value = mock_response
-
+def test_create_game(mock_redis):
     mock_redis.set.return_value = True
 
     response = client.post("/games")
 
     assert response.status_code == 200
     data = response.json()
-    assert data["reply"] == "Welcome to the game!"
+    assert data["reply"] == "You are in a maze of twisty little passages, all alike. What next?"
     assert "game_id" in data
 
 @patch("main.redis_client")
-@patch("main.openai_client", new_callable=AsyncMock)
-def test_create_game_saves_state(mock_openai, mock_redis):
-    mock_response = MagicMock()
-    mock_response.output_text = "Welcome to the game!"
-    mock_response.id = "fake-response-id"
-    mock_openai.responses.create.return_value = mock_response
-
+def test_create_game_saves_state(mock_redis):
     mock_redis.set.return_value = True
 
     client.post("/games")
@@ -50,7 +38,7 @@ def test_create_game_saves_state(mock_openai, mock_redis):
             {
                 "id": "fake-response-id",
                 "role": "game",
-                "text": "Welcome to the game!"
+                "text": "You are in a maze of twisty little passages, all alike. What next?"
             }
         ]
     }
@@ -91,8 +79,7 @@ def test_get_game_not_found(mock_redis):
     assert data["detail"] == "Game not found. Start a new game with POST /games"
 
 @patch("main.redis_client")
-@patch("main.openai_client", new_callable=AsyncMock)
-def test_take_turn(mock_openai, mock_redis):
+def test_take_turn(mock_redis):
     game_id = "test-game-id"
     prompt = quote("Go north, my friend")
 
@@ -105,25 +92,19 @@ def test_take_turn(mock_openai, mock_redis):
         }]
     })
     mock_redis.set.return_value = True
-
-    mock_response = MagicMock()
-    mock_response.output_text = "You go north."
-    mock_response.id = "new-response-id"
-    mock_openai.responses.create.return_value = mock_response
 
     response = client.post(f"/games/{game_id}/turn?prompt={prompt}")
 
     assert response.status_code == 200
     data = response.json()
-    assert data["reply"] == "You go north."
+    assert data["reply"] == "You do a thing. What next?"
     assert data["game_id"] == game_id
-    assert data["turn_id"] == "new-response-id"
+    assert data["turn_id"] == "fake-response-id"
 
 @patch("main.redis_client")
-@patch("main.openai_client", new_callable=AsyncMock)
-def test_take_turn_saves_game_state(mock_openai, mock_redis):
+def test_take_turn_saves_game_state(mock_redis):
     game_id = "test-game-id"
-    prompt = quote("Go north, my friend")
+    prompt = quote("I decide to do a thing!")
 
     mock_redis.get.return_value = json.dumps({
         "turn_id": "previous-response-id",
@@ -134,18 +115,13 @@ def test_take_turn_saves_game_state(mock_openai, mock_redis):
         }]
     })
     mock_redis.set.return_value = True
-
-    mock_response = MagicMock()
-    mock_response.output_text = "You go north."
-    mock_response.id = "new-response-id"
-    mock_openai.responses.create.return_value = mock_response
 
     response = client.post(f"/games/{game_id}/turn?prompt={prompt}")
 
     stored_data = json.loads(mock_redis.set.call_args[0][1])
 
     expected_data = {
-        "turn_id": "new-response-id",
+        "turn_id": "fake-response-id",
         "messages": [{
             "id": "fake-response-id",
             "role": "game",
@@ -153,19 +129,18 @@ def test_take_turn_saves_game_state(mock_openai, mock_redis):
         }, {
             "id": ANY,
             "role": "player",
-            "text": "Go north, my friend"
+            "text": "I decide to do a thing!"
         }, {
-            "id": "new-response-id",
+            "id": "fake-response-id",
             "role": "game",
-            "text": "You go north."
+            "text": "You do a thing. What next?"
         }]
     }
 
     assert stored_data == expected_data
 
 @patch("main.redis_client")
-@patch("main.openai_client", new_callable=AsyncMock)
-def test_take_turn_game_not_found(mock_openai, mock_redis):
+def test_take_turn_game_not_found(mock_redis):
     game_id = "non-existent-game-id"
     prompt = quote("go south, my foe")
 

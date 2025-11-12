@@ -9,6 +9,9 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from openai import AsyncOpenAI
 
+from fake_game import FakeGame
+from openai_game import OpenAIGame
+
 app = FastAPI()
 
 frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
@@ -31,23 +34,10 @@ redis_client = redis.Redis(
     decode_responses=True
 )
 
-MODEL = "gpt-4o-mini"
-INSTRUCTIONS = """
-You are generating a text-based adventure game similar to Colossal Cave Adventure.
-The game is called Path of the Python. The goal is to find the Golden Python at the end.
-The tone of the game should be mysterious and exciting.
-Keep each response to about four sentences.
-"""
-FIRST_PROMPT = """
-Start by saying "You are in a maze of twisty little passages, all alike".
-Explain the goal of the game. Describe the initial setting and ask what the user wants to do.
-"""
-
 openai_client = AsyncOpenAI()
 
 AVOID_OPENAI_CALLS = os.getenv("AVOID_OPENAI_CALLS", "false").lower() == "true"
-TEST_FIRST_PROMPT =  "You are in a maze of twisty little passages, all alike. What next?"
-TEST_REPLY =  "You do a thing. What next?"
+game = FakeGame() if AVOID_OPENAI_CALLS else OpenAIGame()
 
 @app.get("/")
 def read_root():
@@ -57,27 +47,19 @@ def read_root():
 async def create_game():
     game_id = str(uuid.uuid4())
 
-    if AVOID_OPENAI_CALLS:
-        time.sleep(2)
-        response = SimpleNamespace(output_text=TEST_FIRST_PROMPT, id=str(uuid.uuid4()))
-    else:
-        response = await openai_client.responses.create(
-            model=MODEL,
-            instructions=INSTRUCTIONS,
-            input=FIRST_PROMPT
-        )
+    response = await game.start()
 
     game_state = {
         "turn_id": response.id,
         "messages": [{
             "id": response.id,
             "role": "game",
-            "text": response.output_text
+            "text": response.text
         }]
     }
     redis_client.set(game_id, json.dumps(game_state))
 
-    return { "reply": response.output_text, "game_id": game_id, "turn_id": response.id }
+    return { "reply": response.text, "game_id": game_id, "turn_id": response.id }
 
 @app.get("/games/{game_id}")
 def get_game(game_id: str):
@@ -104,16 +86,7 @@ async def take_turn(game_id: str, prompt: str):
     game_state = json.loads(serialized_game_state)
     previous_response_id = game_state["turn_id"]
 
-    if AVOID_OPENAI_CALLS:
-        time.sleep(2)
-        response = SimpleNamespace(output_text=TEST_REPLY, id=str(uuid.uuid4()))
-    else:
-        response = await openai_client.responses.create(
-            model=MODEL,
-            previous_response_id=previous_response_id,
-            instructions=INSTRUCTIONS,
-            input=prompt
-        )
+    response = await game.take_turn(previous_response_id, prompt)
 
     game_state["turn_id"] = response.id
     game_state["messages"].append({
@@ -124,9 +97,9 @@ async def take_turn(game_id: str, prompt: str):
     game_state["messages"].append({
         "id": response.id,
         "role": "game",
-        "text": response.output_text
+        "text": response.text
     })
 
     redis_client.set(game_id, json.dumps(game_state))
 
-    return { "reply": response.output_text, "game_id": game_id, "turn_id": response.id }
+    return { "reply": response.text, "game_id": game_id, "turn_id": response.id }
