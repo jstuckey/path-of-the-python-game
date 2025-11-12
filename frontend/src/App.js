@@ -9,9 +9,9 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [savedGames, setSavedGames] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem('savedGames') || '[]');
+      return JSON.parse(localStorage.getItem('savedGames') || '{}');
     } catch {
-      return [];
+      return {};
     }
   });
   const [showSavedGames, setShowSavedGames] = useState(false);
@@ -37,11 +37,14 @@ function App() {
     setMessages([{ id: data.turn_id, role: 'game', text: data.reply }])
 
     setSavedGames((currentSavedGames) => {
-      if (currentSavedGames.includes(data.game_id)) {
-        return currentSavedGames;
-      } else {
-        return [...currentSavedGames, data.game_id];
-      }
+      const newSavedGames = {
+        ...currentSavedGames,
+        [data.game_id]: { 
+          id: data.game_id, 
+          date: new Date()
+        }
+      };
+      return newSavedGames;
     });
 
     setIsSubmitting(false);
@@ -51,9 +54,9 @@ function App() {
     setGameId(localStorage.getItem('gameId'));
     setMessages(JSON.parse(localStorage.getItem('messages')) || []);
   }
-  
-  const handleShowSavedGaves = async () => {
-    setSavedGames(JSON.parse(localStorage.getItem('savedGames')) || []);
+
+  const handleShowSavedGames = async () => {
+    setSavedGames(JSON.parse(localStorage.getItem('savedGames')) || {});
     setShowSavedGames(true);
   }
 
@@ -138,6 +141,10 @@ function App() {
     localStorage.setItem('savedGames', JSON.stringify(savedGames));
   }, [savedGames]);
 
+  useEffect(() => {
+    localStorage.setItem('savedGames', JSON.stringify(savedGames));
+  }, [savedGames]);
+
   return (
     <div className="App">
       <a href="/"><h1>Path of the Python</h1></a>
@@ -160,7 +167,7 @@ function App() {
 
         {!gameId && (localStorage.getItem('savedGames')) && (
           <button
-            onClick={handleShowSavedGaves}
+            onClick={handleShowSavedGames}
             tabIndex={0}
           >Load Game</button>
         )}
@@ -168,9 +175,16 @@ function App() {
       {showSavedGames && (
         <div id="saved-games">
           <ul>
-            {savedGames.map((savedGameId) => (
+            {Object.entries(savedGames).map(([savedGameId, game]) => (
               <li key={savedGameId}>
-                <p onClick={() => handleLoadGame(savedGameId)}>Game {savedGameId}</p>
+                <p onClick={() => handleLoadGame(savedGameId)}>Game started on {
+                  new Date(game.date).toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })
+                }</p>
               </li>
             ))}
           </ul>
