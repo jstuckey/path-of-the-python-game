@@ -7,6 +7,14 @@ function App() {
   const [gameId, setGameId] = useState(null);
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState([]);
+  const [savedGames, setSavedGames] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('savedGames') || '[]');
+    } catch {
+      return [];
+    }
+  });
+  const [showSavedGames, setShowSavedGames] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const newGameButtonRef = useRef(null);
@@ -27,6 +35,15 @@ function App() {
     const data = await response.json();
     setGameId(data.game_id)
     setMessages([{ id: data.turn_id, role: 'game', text: data.reply }])
+
+    setSavedGames((currentSavedGames) => {
+      if (currentSavedGames.includes(data.game_id)) {
+        return currentSavedGames;
+      } else {
+        return [...currentSavedGames, data.game_id];
+      }
+    });
+
     setIsSubmitting(false);
   }
 
@@ -34,6 +51,29 @@ function App() {
     setGameId(localStorage.getItem('gameId'));
     setMessages(JSON.parse(localStorage.getItem('messages')) || []);
   }
+  
+  const handleShowSavedGaves = async () => {
+    setSavedGames(JSON.parse(localStorage.getItem('savedGames')) || []);
+    setShowSavedGames(true);
+  }
+
+  const handleLoadGame = async (savedGameId) => {
+    setGameId('waiting')
+    setMessages([{ id: 'waiting', role: 'waiting', text: '...' }])
+    setIsSubmitting(true);
+
+    const response = await fetch(`${backendUrl}/games/${savedGameId}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    })
+
+    const data = await response.json();
+
+    setGameId(savedGameId)
+    setMessages(data.messages);
+    setIsSubmitting(false);
+    setShowSavedGames(false);
+  } 
 
   const handleSubmitPrompt = async (e) => {
     e.preventDefault();
@@ -74,6 +114,8 @@ function App() {
     requestAnimationFrame(() => {
       inputRef.current?.focus();
     });
+
+    setShowSavedGames(false);
   }, [gameId]);
 
   const lastMessageId = messages.at(-1)?.id;
@@ -86,12 +128,15 @@ function App() {
   }, [lastMessageId]);
 
   useEffect(() => {
-    console.log('Saving game state to localStorage', { gameId, messages });
     if (gameId && gameId !== 'waiting') {
       localStorage.setItem('gameId', gameId);
       localStorage.setItem('messages', JSON.stringify(messages));
     }
   }, [gameId, messages]);
+
+  useEffect(() => {
+    localStorage.setItem('savedGames', JSON.stringify(savedGames));
+  }, [savedGames]);
 
   return (
     <div className="App">
@@ -105,14 +150,32 @@ function App() {
           >New Game</button>
         )}
 
-        {!gameId &&  localStorage.getItem('gameId') && (
+        {!gameId && localStorage.getItem('gameId') && (
           <button
             ref={resumeGameButtonRef}
             onClick={handleResumeGame}
             tabIndex={0}
           >Resume Game</button>
         )}
+
+        {!gameId && (localStorage.getItem('savedGames')) && (
+          <button
+            onClick={handleShowSavedGaves}
+            tabIndex={0}
+          >Load Game</button>
+        )}
       </div>
+      {showSavedGames && (
+        <div id="saved-games">
+          <ul>
+            {savedGames.map((savedGameId) => (
+              <li key={savedGameId}>
+                <p onClick={() => handleLoadGame(savedGameId)}>Game {savedGameId}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       {gameId && (
         <div id="game">
           <div id="messages" ref={messagesRef}>
