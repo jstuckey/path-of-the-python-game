@@ -1,5 +1,4 @@
 import asyncio
-from pathlib import Path
 from unittest.mock import patch, AsyncMock, MagicMock
 
 from openai_storyteller import OpenAIStoryteller
