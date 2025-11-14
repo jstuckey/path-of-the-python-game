@@ -80,4 +80,3 @@ async def take_turn(game_id: str, prompt: str):
     await game_store.save(game)
 
     return { "id": game.id, "turn_id": response.id, "reply": response.text }
-    

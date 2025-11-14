@@ -38,8 +38,8 @@ function App() {
 
     setSavedGames((currentSavedGames) => {
       const newSavedGames = [
-        { 
-          id: data.id, 
+        {
+          id: data.id,
           date: new Date()
         },
         ...currentSavedGames,
@@ -76,7 +76,7 @@ function App() {
     setMessages(data.messages);
     setIsSubmitting(false);
     setShowSavedGames(false);
-  } 
+  }
 
   const handleSubmitPrompt = async (e) => {
     e.preventDefault();

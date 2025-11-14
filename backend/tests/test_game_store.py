@@ -2,14 +2,14 @@ import asyncio
 from unittest.mock import AsyncMock, patch
 
 from game import Game, Message
-from game_store import GameStore 
+from game_store import GameStore
 
 @patch("game_store.GameStore.redis_client", new_callable=AsyncMock)
 def test_find(mock_redis_client):
     game_state = '{"id": "test-game-id", "turn_id": "turn-1", \
         "messages": [{ "id": "msg-1", "role": "player", "text": "Hello"}]}'
     mock_redis_client.get.return_value = game_state
-    
+
     game = asyncio.run(
         GameStore().find("test-game-id")
     )
@@ -24,7 +24,7 @@ def test_find(mock_redis_client):
 @patch("game_store.GameStore.redis_client", new_callable=AsyncMock)
 def test_find_not_found(mock_redis_client):
     mock_redis_client.get.return_value = None
-    
+
     game = asyncio.run(
         GameStore().find("non-existent-game-id")
     )

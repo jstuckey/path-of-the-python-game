@@ -16,7 +16,7 @@ class FakeStoryteller:
 
         return GameResponse(
             id=str(uuid.uuid4()),
-            text=self.FIRST_REPLY  
+            text=self.FIRST_REPLY
         )
 
     async def take_turn(self, previous_turn_id: str, prompt: str) -> GameResponse:

@@ -66,13 +66,13 @@ def test_from_json():
     assert game.messages[1].text == "Go north."
 
 def test_from_json_with_invalid_data():
-    invalid_json_data = '{"invalid_json": true'  
+    invalid_json_data = '{"invalid_json": true'
 
     try:
         Game.model_validate_json(invalid_json_data)
         assert False, "Expected an exception due to invalid JSON"
     except ValueError:
-        pass  
+        pass
 
 def test_to_json():
     messages = [
@@ -86,7 +86,7 @@ def test_to_json():
         "turn_id": "456",
         "messages": [
             {"id": "msg1", "role": "game", "text": "Welcome to the game!"},
-            {"id": "msg2", "role": "player", "text": "Go north."}   
+            {"id": "msg2", "role": "player", "text": "Go north."}
         ]
     }
 

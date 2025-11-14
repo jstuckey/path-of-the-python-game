@@ -1,4 +1,4 @@
-from unittest.mock import ANY, AsyncMock, patch 
+from unittest.mock import ANY, AsyncMock, patch
 from urllib.parse import quote
 
 from game import Game, Message
@@ -31,7 +31,7 @@ def test_create_game_saves_state(mock_game_store):
     client.post("/games")
 
     saved_data = mock_game_store.save.call_args[0][0].model_dump()
-    
+
     expected_data = {
         "id": ANY,
         "turn_id": "fake-response-id",
@@ -43,7 +43,7 @@ def test_create_game_saves_state(mock_game_store):
             }
         ]
     }
-    
+
     assert saved_data == expected_data
 
 @patch("main.game_store", new_callable=AsyncMock)
@@ -55,8 +55,8 @@ def test_get_game(mock_game_store):
         turn_id="previous-response-id",
         messages=[
             Message(
-                id="fake-response-id", 
-                role="game", 
+                id="fake-response-id",
+                role="game",
                 text="A mysterious thing happened."
             )
         ]
@@ -92,8 +92,8 @@ def test_take_turn(mock_game_store):
         turn_id="previous-response-id",
         messages=[
             Message(
-                id="fake-response-id", 
-                role="game", 
+                id="fake-response-id",
+                role="game",
                 text="Welcome to the game!"
             )
         ]
@@ -118,8 +118,8 @@ def test_take_turn_saves_game_state(mock_game_store):
         turn_id="previous-response-id",
         messages=[
             Message(
-                id="fake-response-id", 
-                role="game", 
+                id="fake-response-id",
+                role="game",
                 text="Welcome to the game!"
             )
         ]
