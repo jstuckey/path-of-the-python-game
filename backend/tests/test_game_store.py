@@ -35,7 +35,6 @@ def test_find_by_id_not_found(mock_redis_client):
 def test_save_game(mock_redis_client):
     asyncio.run(
         GameStore().save(
-            "test-game-id",
             Game(
                 id="test-game-id",
                 turn_id="turn-1",

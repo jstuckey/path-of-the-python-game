@@ -24,5 +24,5 @@ class GameStore:
         else:
             return Game.model_validate_json(serialized_game_state)
 
-    async def save(self, id: str, game: Game):
-        await self.redis_client.set(id, game.model_dump_json())
+    async def save(self, game: Game):
+        await self.redis_client.set(game.id, game.model_dump_json())
