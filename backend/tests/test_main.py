@@ -1,7 +1,8 @@
 import json
-from unittest.mock import ANY, patch 
+from unittest.mock import ANY, AsyncMock, patch 
 from urllib.parse import quote
 
+from game import Game, Message
 from fastapi.testclient import TestClient
 
 from main import app
@@ -13,9 +14,9 @@ def test_read_root():
     assert response.status_code == 200
     assert response.json() == "Path of the Python"
 
-@patch("main.redis_client")
-def test_create_game(mock_redis):
-    mock_redis.set.return_value = True
+@patch("main.game_store", new_callable=AsyncMock)
+def test_create_game(mock_game_store):
+    mock_game_store.save.return_value = True
 
     response = client.post("/games")
 
@@ -24,15 +25,16 @@ def test_create_game(mock_redis):
     assert data["reply"] == "You are in a maze of twisty little passages, all alike. What next?"
     assert "game_id" in data
 
-@patch("main.redis_client")
-def test_create_game_saves_state(mock_redis):
-    mock_redis.set.return_value = True
+@patch("main.game_store", new_callable=AsyncMock)
+def test_create_game_saves_state(mock_game_store):
+    mock_game_store.save.return_value = True
 
     client.post("/games")
 
-    stored_data = json.loads(mock_redis.set.call_args[0][1])
+    saved_data = mock_game_store.save.call_args[0][0].model_dump()
     
     expected_data = {
+        "id": ANY,
         "turn_id": "fake-response-id",
         "messages": [
             {
@@ -43,34 +45,37 @@ def test_create_game_saves_state(mock_redis):
         ]
     }
     
-    assert stored_data == expected_data
+    assert saved_data == expected_data
 
-@patch("main.redis_client")
-def test_get_game(mock_redis):
+@patch("main.game_store", new_callable=AsyncMock)
+def test_get_game(mock_game_store):
     game_id = "test-game-id"
 
-    mock_redis.get.return_value = json.dumps({
-        "turn_id": "previous-response-id",
-        "messages": [{
-            "id": "fake-response-id", 
-            "role": "game", 
-            "text": "A mysterious thing happened."
-        }]
-    })
+    mock_game_store.find.return_value = Game(
+        id=game_id,
+        turn_id="previous-response-id",
+        messages=[
+            Message(
+                id="fake-response-id", 
+                role="game", 
+                text="A mysterious thing happened."
+            )
+        ]
+    )
 
     response = client.get(f"/games/{game_id}")
 
     assert response.status_code == 200
     data = response.json()
-    assert data["game_id"] == game_id
+    assert data["id"] == game_id
     assert data["turn_id"] == "previous-response-id"
     assert data["messages"][0]["text"] == "A mysterious thing happened."
 
-@patch("main.redis_client")
-def test_get_game_not_found(mock_redis):
+@patch("main.game_store", new_callable=AsyncMock)
+def test_get_game_not_found(mock_game_store):
     game_id = "non-existent-game-id"
 
-    mock_redis.get.return_value = None
+    mock_game_store.find.return_value = None
 
     response = client.get(f"/games/{game_id}")
 
@@ -78,20 +83,23 @@ def test_get_game_not_found(mock_redis):
     data = response.json()
     assert data["detail"] == "Game not found. Start a new game with POST /games"
 
-@patch("main.redis_client")
-def test_take_turn(mock_redis):
+@patch("main.game_store", new_callable=AsyncMock)
+def test_take_turn(mock_game_store):
     game_id = "test-game-id"
     prompt = quote("Go north, my friend")
 
-    mock_redis.get.return_value = json.dumps({
-        "turn_id": "previous-response-id",
-        "messages": [{
-            "id": "fake-response-id", 
-            "role": "game", 
-            "text": "Welcome to the game!"
-        }]
-    })
-    mock_redis.set.return_value = True
+    mock_game_store.find.return_value = Game(
+        id=game_id,
+        turn_id="previous-response-id",
+        messages=[
+            Message(
+                id="fake-response-id", 
+                role="game", 
+                text="Welcome to the game!"
+            )
+        ]
+    )
+    mock_game_store.save.return_value = True
 
     response = client.post(f"/games/{game_id}/turn?prompt={prompt}")
 
@@ -101,26 +109,30 @@ def test_take_turn(mock_redis):
     assert data["game_id"] == game_id
     assert data["turn_id"] == "fake-response-id"
 
-@patch("main.redis_client")
-def test_take_turn_saves_game_state(mock_redis):
+@patch("main.game_store", new_callable=AsyncMock)
+def test_take_turn_saves_game_state(mock_game_store):
     game_id = "test-game-id"
     prompt = quote("I decide to do a thing!")
 
-    mock_redis.get.return_value = json.dumps({
-        "turn_id": "previous-response-id",
-        "messages": [{
-            "id": "fake-response-id", 
-            "role": "game", 
-            "text": "Welcome to the game!"
-        }]
-    })
-    mock_redis.set.return_value = True
+    mock_game_store.find.return_value = Game(
+        id=game_id,
+        turn_id="previous-response-id",
+        messages=[
+            Message(
+                id="fake-response-id", 
+                role="game", 
+                text="Welcome to the game!"
+            )
+        ]
+    )
+    mock_game_store.save.return_value = True
 
     client.post(f"/games/{game_id}/turn?prompt={prompt}")
 
-    stored_data = json.loads(mock_redis.set.call_args[0][1])
+    saved_data = mock_game_store.save.call_args[0][0].model_dump()
 
     expected_data = {
+        "id": game_id,
         "turn_id": "fake-response-id",
         "messages": [{
             "id": "fake-response-id",
@@ -137,14 +149,14 @@ def test_take_turn_saves_game_state(mock_redis):
         }]
     }
 
-    assert stored_data == expected_data
+    assert saved_data == expected_data
 
-@patch("main.redis_client")
-def test_take_turn_game_not_found(mock_redis):
+@patch("main.game_store", new_callable=AsyncMock)
+def test_take_turn_game_not_found(mock_game_store):
     game_id = "non-existent-game-id"
     prompt = quote("go south, my foe")
 
-    mock_redis.get.return_value = None
+    mock_game_store.find.return_value = None
 
     response = client.post(f"/games/{game_id}/turn?prompt={prompt}")
 
