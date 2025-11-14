@@ -44,7 +44,7 @@ async def create_game():
 
     await game_store.save(game)
 
-    return { "reply": response.text, "game_id": game.id, "turn_id": response.id }
+    return { "id": game.id, "turn_id": response.id, "reply": response.text }
 
 @app.get("/games/{game_id}")
 async def get_game(game_id: str):
@@ -61,7 +61,6 @@ async def take_turn(game_id: str, prompt: str):
 
     if not game:
         raise HTTPException(status_code=404, detail="Game not found. Start a new game with POST /games")
-
 
     response = await storyteller.take_turn(game.turn_id, prompt)
 
@@ -83,4 +82,5 @@ async def take_turn(game_id: str, prompt: str):
 
     await game_store.save(game)
 
-    return { "reply": response.text, "game_id": game_id, "turn_id": response.id }
+    return { "id": game.id, "turn_id": response.id, "reply": response.text }
+    

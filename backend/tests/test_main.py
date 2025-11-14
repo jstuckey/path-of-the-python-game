@@ -22,8 +22,8 @@ def test_create_game(mock_game_store):
 
     assert response.status_code == 200
     data = response.json()
+    assert "id" in data
     assert data["reply"] == "You are in a maze of twisty little passages, all alike. What next?"
-    assert "game_id" in data
 
 @patch("main.game_store", new_callable=AsyncMock)
 def test_create_game_saves_state(mock_game_store):
@@ -105,9 +105,9 @@ def test_take_turn(mock_game_store):
 
     assert response.status_code == 200
     data = response.json()
-    assert data["reply"] == "You do a thing. What next?"
-    assert data["game_id"] == game_id
+    assert data["id"] == game_id
     assert data["turn_id"] == "fake-response-id"
+    assert data["reply"] == "You do a thing. What next?"
 
 @patch("main.game_store", new_callable=AsyncMock)
 def test_take_turn_saves_game_state(mock_game_store):
