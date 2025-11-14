@@ -2,7 +2,7 @@ import json
 
 from unittest.mock import ANY, patch
 
-from game import Game, Message
+from game import Game, Message, Role
 
 def test_initialization():
     messages = [
@@ -35,6 +35,13 @@ def test_message_initialization_with_defaults():
     assert message.id == ANY
     assert message.role == "game"
     assert message.text == ""
+
+def test_message_role_accepts_enum():
+    message_game = Message(role=Role.GAME)
+    assert message_game.role == "game"
+
+    message_player = Message(role=Role.PLAYER)
+    assert message_player.role == "player"
 
 def test_from_json():
     json_data = json.dumps({
