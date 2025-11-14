@@ -6,5 +6,7 @@ RUN uv sync
 COPY . .
 EXPOSE 8000
 
+ENV PYTHONPATH=/app/app
+
 ENTRYPOINT ["uv", "run"]
-CMD ["fastapi", "dev", "--host", "0.0.0.0", "main.py"]
+CMD ["fastapi", "dev", "--host", "0.0.0.0"]
