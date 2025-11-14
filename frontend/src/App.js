@@ -9,9 +9,9 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [savedGames, setSavedGames] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem('savedGames') || '{}');
+      return JSON.parse(localStorage.getItem('savedGames') || '[]');
     } catch {
-      return {};
+      return []
     }
   });
   const [showSavedGames, setShowSavedGames] = useState(false);
@@ -37,13 +37,13 @@ function App() {
     setMessages([{ id: data.turn_id, role: 'game', text: data.reply }])
 
     setSavedGames((currentSavedGames) => {
-      const newSavedGames = {
-        ...currentSavedGames,
-        [data.id]: { 
+      const newSavedGames = [
+        { 
           id: data.id, 
           date: new Date()
-        }
-      };
+        },
+        ...currentSavedGames,
+      ];
       return newSavedGames;
     });
 
@@ -56,7 +56,7 @@ function App() {
   }
 
   const handleShowSavedGames = async () => {
-    setSavedGames(JSON.parse(localStorage.getItem('savedGames')) || {});
+    setSavedGames(JSON.parse(localStorage.getItem('savedGames')) || []);
     setShowSavedGames(true);
   }
 
@@ -141,10 +141,6 @@ function App() {
     localStorage.setItem('savedGames', JSON.stringify(savedGames));
   }, [savedGames]);
 
-  useEffect(() => {
-    localStorage.setItem('savedGames', JSON.stringify(savedGames));
-  }, [savedGames]);
-
   return (
     <div className="App">
       <a href="/"><h1>Path of the Python</h1></a>
@@ -175,9 +171,9 @@ function App() {
       {showSavedGames && (
         <div id="saved-games">
           <ul>
-            {Object.entries(savedGames).map(([savedGameId, game]) => (
-              <li key={savedGameId}>
-                <p onClick={() => handleLoadGame(savedGameId)}>Game started on {
+            {savedGames.map((game) => (
+              <li key={game.id}>
+                <p onClick={() => handleLoadGame(game.id)}>Game started on {
                   new Date(game.date).toLocaleDateString('en-US', {
                     month: 'long',
                     day: 'numeric',
