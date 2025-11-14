@@ -1,4 +1,3 @@
-import json
 from unittest.mock import ANY, AsyncMock, patch 
 from urllib.parse import quote
 

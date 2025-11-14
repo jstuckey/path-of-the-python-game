@@ -1,8 +1,5 @@
-import json
 import os
-import uuid
 
-import redis.asyncio as redis
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 

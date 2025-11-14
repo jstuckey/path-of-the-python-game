@@ -1,6 +1,6 @@
 import json
 
-from unittest.mock import ANY, patch
+from unittest.mock import ANY
 
 from game import Game, Message, Role
 
