@@ -5,13 +5,13 @@ from game import Game, Message
 from game_store import GameStore 
 
 @patch("game_store.GameStore.redis_client", new_callable=AsyncMock)
-def test_find_by_id(mock_redis_client):
+def test_find(mock_redis_client):
     game_state = '{"id": "test-game-id", "turn_id": "turn-1", \
         "messages": [{ "id": "msg-1", "role": "player", "text": "Hello"}]}'
     mock_redis_client.get.return_value = game_state
     
     game = asyncio.run(
-        GameStore().find_by_id("test-game-id")
+        GameStore().find("test-game-id")
     )
 
     assert game.id == "test-game-id"
@@ -22,11 +22,11 @@ def test_find_by_id(mock_redis_client):
     assert game.messages[0].text == "Hello"
 
 @patch("game_store.GameStore.redis_client", new_callable=AsyncMock)
-def test_find_by_id_not_found(mock_redis_client):
+def test_find_not_found(mock_redis_client):
     mock_redis_client.get.return_value = None
     
     game = asyncio.run(
-        GameStore().find_by_id("non-existent-game-id")
+        GameStore().find("non-existent-game-id")
     )
 
     assert game is None

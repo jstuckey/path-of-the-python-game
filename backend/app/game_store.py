@@ -16,7 +16,7 @@ class GameStore:
         decode_responses=True
     )
 
-    async def find_by_id(self, id: str) -> Game:
+    async def find(self, id: str) -> Game:
         serialized_game_state = await self.redis_client.get(id)
 
         if not serialized_game_state:
