@@ -1,5 +1,6 @@
 import sys
 import time
+import uuid
 
 from game_response import GameResponse
 
@@ -14,7 +15,7 @@ class FakeStoryteller:
             time.sleep(2)
 
         return GameResponse(
-            id=self.ID,
+            id=str(uuid.uuid4()),
             text=self.FIRST_REPLY  
         )
 
@@ -24,6 +25,6 @@ class FakeStoryteller:
             time.sleep(2)
 
         return GameResponse(
-            id=self.ID,
+            id=str(uuid.uuid4()),
             text=self.REPLY
         )
