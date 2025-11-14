@@ -33,14 +33,14 @@ function App() {
     })
 
     const data = await response.json();
-    setGameId(data.game_id)
+    setGameId(data.id)
     setMessages([{ id: data.turn_id, role: 'game', text: data.reply }])
 
     setSavedGames((currentSavedGames) => {
       const newSavedGames = {
         ...currentSavedGames,
-        [data.game_id]: { 
-          id: data.game_id, 
+        [data.id]: { 
+          id: data.id, 
           date: new Date()
         }
       };
