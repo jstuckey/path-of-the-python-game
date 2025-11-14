@@ -1,6 +1,8 @@
 import json
 
-from game import Game
+from unittest.mock import ANY, patch
+
+from game import Game, Message
 
 def test_initialization():
     messages = [
@@ -19,6 +21,20 @@ def test_initialization():
     assert game.messages[1].id == "msg2"
     assert game.messages[1].role == "player"
     assert game.messages[1].text == "Go north."
+
+def test_game_initialization_with_defaults():
+    game = Game()
+
+    assert game.id == ANY
+    assert game.turn_id == ANY
+    assert game.messages == []
+
+def test_message_initialization_with_defaults():
+    message = Message()
+
+    assert message.id == ANY
+    assert message.role == "game"
+    assert message.text == ""
 
 def test_from_json():
     json_data = json.dumps({
@@ -50,19 +66,6 @@ def test_from_json_with_invalid_data():
         assert False, "Expected an exception due to invalid JSON"
     except ValueError:
         pass  
-
-def test_from_json_with_missing_fields():
-    missing_fields_json = json.dumps({
-        "id": "123",
-        # "turn_id" is missing
-        "messages": [{"id": "msg1", "role": "game", "text": "Welcome to the game!"}]
-    })
-
-    try:
-        Game.model_validate_json(missing_fields_json)
-        assert False, "Expected an exception due to missing fields"
-    except ValueError:
-        pass
 
 def test_to_json():
     messages = [
