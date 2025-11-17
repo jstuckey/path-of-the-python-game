@@ -1,10 +1,10 @@
-.header-controls {
+.game-navigation {
   display: flex;
   justify-content: center;
   margin: 16px 0 32px;
 }
 
-.header-controls button {
+.game-navigation button {
   margin: 0 10px;
   width: 150px;
 }

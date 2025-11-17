@@ -1,7 +1,7 @@
 import './App.css';
 import React, { useState, useRef, useEffect } from 'react';
 import SavedGames from './SavedGames';
-import HeaderControls from './HeaderControls';
+import GameNavigation from './GameNavigation';
 
 function App() {
   const backendUrl = process.env.REACT_APP_BACKEND_URL
@@ -136,7 +136,7 @@ function App() {
   return (
     <div className="App">
       <a href="/"><h1>Path of the Python</h1></a>
-      <HeaderControls
+      <GameNavigation
         gameId={gameId}
         onNewGame={handleNewGame}
         onResumeGame={handleResumeGame}

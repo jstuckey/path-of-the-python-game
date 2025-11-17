@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
-import './HeaderControls.css';
+import './GameNavigation.css';
 
-function HeaderControls({
+function GameNavigation({
   gameId,
   onNewGame,
   onResumeGame,
@@ -20,7 +20,7 @@ function HeaderControls({
   if (gameId) return null;
 
   return (
-    <div className="header-controls">
+    <div className="game-navigation">
       <button
         ref={newGameButtonRef}
         onClick={onNewGame}
@@ -50,4 +50,4 @@ function HeaderControls({
   );
 }
 
-export default HeaderControls;
+export default GameNavigation;
