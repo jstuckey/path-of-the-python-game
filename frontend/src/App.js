@@ -1,6 +1,7 @@
 import './App.css';
 import React, { useState, useRef, useEffect } from 'react';
 import SavedGames from './SavedGames';
+import HeaderControls from './HeaderControls';
 
 function App() {
   const backendUrl = process.env.REACT_APP_BACKEND_URL
@@ -18,7 +19,6 @@ function App() {
   const [showSavedGames, setShowSavedGames] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const newGameButtonRef = useRef(null);
   const messagesRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -104,14 +104,6 @@ function App() {
   }
 
   useEffect(() => {
-    if (gameId) return;
-
-    requestAnimationFrame(() => {
-      newGameButtonRef.current?.focus();
-    });
-  });
-
-  useEffect(() => {
     if (!gameId) return;
 
     requestAnimationFrame(() => {
@@ -144,29 +136,12 @@ function App() {
   return (
     <div className="App">
       <a href="/"><h1>Path of the Python</h1></a>
-      <div className="header-controls">
-        {!gameId && (
-          <button
-            ref={newGameButtonRef}
-            onClick={handleNewGame}
-            tabIndex={0}
-          >New Game</button>
-        )}
-
-        {!gameId && localStorage.getItem('gameId') && (
-          <button
-            onClick={handleResumeGame}
-            tabIndex={0}
-          >Resume Game</button>
-        )}
-
-        {!gameId && (localStorage.getItem('savedGames')) && (
-          <button
-            onClick={handleShowSavedGames}
-            tabIndex={0}
-          >Load Game</button>
-        )}
-      </div>
+      <HeaderControls
+        gameId={gameId}
+        onNewGame={handleNewGame}
+        onResumeGame={handleResumeGame}
+        onShowSavedGames={handleShowSavedGames}
+      />
       {showSavedGames && (
         <SavedGames
           savedGames={savedGames}
