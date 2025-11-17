@@ -1,5 +1,6 @@
 import './App.css';
 import React, { useState, useRef, useEffect } from 'react';
+import SavedGames from './SavedGames';
 
 function App() {
   const backendUrl = process.env.REACT_APP_BACKEND_URL
@@ -60,7 +61,7 @@ function App() {
     setShowSavedGames(true);
   }
 
-  const handleLoadGame = async (savedGameId) => {
+  const handleLoadSavedGame = async (savedGameId) => {
     setGameId('waiting')
     setMessages([{ id: 'waiting', role: 'waiting', text: '...' }])
     setIsSubmitting(true);
@@ -169,22 +170,10 @@ function App() {
         )}
       </div>
       {showSavedGames && (
-        <div id="saved-games">
-          <ul>
-            {savedGames.map((game) => (
-              <li key={game.id}>
-                <p onClick={() => handleLoadGame(game.id)}>Game started on {
-                  new Date(game.date).toLocaleDateString('en-US', {
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })
-                }</p>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <SavedGames
+          savedGames={savedGames}
+          onSavedGameClicked={handleLoadSavedGame}
+        />
       )}
       {gameId && (
         <div id="game">
