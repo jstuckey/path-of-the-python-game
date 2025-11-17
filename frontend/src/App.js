@@ -1,7 +1,8 @@
 import './App.css';
 import React, { useState, useRef, useEffect } from 'react';
-import SavedGames from './SavedGames';
 import GameNavigation from './GameNavigation';
+import SavedGames from './SavedGames';
+import Messages from './Messages';
 
 function App() {
   const backendUrl = process.env.REACT_APP_BACKEND_URL
@@ -19,7 +20,6 @@ function App() {
   const [showSavedGames, setShowSavedGames] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const messagesRef = useRef(null);
   const inputRef = useRef(null);
 
   const handleNewGame = async () => {
@@ -113,15 +113,6 @@ function App() {
     setShowSavedGames(false);
   }, [gameId]);
 
-  const lastMessageId = messages.at(-1)?.id;
-
-  useEffect(() => {
-    const el = messagesRef.current;
-    if (!el) return;
-
-    el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
-  }, [lastMessageId]);
-
   useEffect(() => {
     if (gameId && gameId !== 'waiting') {
       localStorage.setItem('gameId', gameId);
@@ -150,16 +141,7 @@ function App() {
       )}
       {gameId && (
         <div id="game">
-          <div id="messages" ref={messagesRef}>
-            {messages.map((msg) => (
-              <div key={msg.id} className={`message ${msg.role}`}>
-                <div className="role-label">
-                  <i>{msg.role === 'player' ? 'Player' : 'Mysterious Narrator'}</i>
-                </div>
-                {msg.text}
-              </div>
-            ))}
-          </div>
+          <Messages messages={messages} />
           <form onSubmit={handleSubmitPrompt}>
             <input
               ref={inputRef}
