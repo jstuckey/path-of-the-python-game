@@ -19,7 +19,6 @@ function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const newGameButtonRef = useRef(null);
-  const resumeGameButtonRef = useRef(null);
   const messagesRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -156,7 +155,6 @@ function App() {
 
         {!gameId && localStorage.getItem('gameId') && (
           <button
-            ref={resumeGameButtonRef}
             onClick={handleResumeGame}
             tabIndex={0}
           >Resume Game</button>
