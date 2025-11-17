@@ -1,0 +1,40 @@
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+input[type="text"] {
+  background-color: #1e1e1e;
+  border-radius: 4px;
+  border: 1px solid #3c3c3c;
+  box-sizing: border-box;
+  color: #e0e0e0;
+  font-size: 1em;
+  min-height: 44px;
+  padding: 10px;
+  transition: border-color 0.3s ease;
+  width: 100%;
+}
+
+input[type="text"]::placeholder {
+  color: #888;
+}
+
+input[type="text"]:focus {
+  animation: inputPulse 4s ease-in-out infinite;
+  border-color: rgba(223, 244, 3, 0.832);
+  outline: none;
+}
+
+@keyframes inputPulse {
+  0% {
+    box-shadow: 0 0 6px rgba(223, 244, 3, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(223, 244, 3, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 6px rgba(223, 244, 3, 0.4);
+  }
+}

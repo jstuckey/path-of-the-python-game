@@ -1,14 +1,14 @@
 import './App.css';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import GameNavigation from './GameNavigation';
 import SavedGames from './SavedGames';
 import Messages from './Messages';
+import PromptInput from './PromptInput';
 
 function App() {
   const backendUrl = process.env.REACT_APP_BACKEND_URL
 
   const [gameId, setGameId] = useState(null);
-  const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState([]);
   const [savedGames, setSavedGames] = useState(() => {
     try {
@@ -19,8 +19,6 @@ function App() {
   });
   const [showSavedGames, setShowSavedGames] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const inputRef = useRef(null);
 
   const handleNewGame = async () => {
     setGameId('waiting')
@@ -78,40 +76,24 @@ function App() {
     setShowSavedGames(false);
   }
 
-  const handleSubmitPrompt = async (e) => {
-    e.preventDefault();
-    if (!prompt) return;
-
+  const handlePromptSubmit = async (promptText) => {
     const playerTurnId = Date.now().toString();
-    const playerPrompt = prompt;
-    const playerMessage = { id: playerTurnId, role: 'player', text: playerPrompt };
+    const playerMessage = { id: playerTurnId, role: 'player', text: promptText };
     setMessages((currentMessages) => [...currentMessages, playerMessage]);
 
     const waitingMessage = { id: 'waiting', role: 'waiting', text: '...' };
     setMessages((currentMessages) => [...currentMessages, waitingMessage]);
 
     setIsSubmitting(true);
-    setPrompt("");
 
-    const response = await fetch(`${backendUrl}/games/${gameId}/turn?prompt=${playerPrompt}`, { method: 'POST' });
+    const response = await fetch(`${backendUrl}/games/${gameId}/turn?prompt=${promptText}`, { method: 'POST' });
     const data = await response.json();
 
     const gameMessage = { id: data.turn_id, role: 'game', text: data.reply };
     setMessages((currentMessages) => [...currentMessages.slice(0, -1), gameMessage]);
 
     setIsSubmitting(false);
-    inputRef.current?.focus();
-  }
-
-  useEffect(() => {
-    if (!gameId) return;
-
-    requestAnimationFrame(() => {
-      inputRef.current?.focus();
-    });
-
-    setShowSavedGames(false);
-  }, [gameId]);
+  };
 
   useEffect(() => {
     if (gameId && gameId !== 'waiting') {
@@ -142,16 +124,11 @@ function App() {
       {gameId && (
         <div id="game">
           <Messages messages={messages} />
-          <form onSubmit={handleSubmitPrompt}>
-            <input
-              ref={inputRef}
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="What would you like to do?"
-              type="text"
-            />
-            <button type="submit" tabIndex={0} disabled={isSubmitting || !prompt}>Submit</button>
-          </form>
+          <PromptInput
+            gameId={gameId}
+            onSubmit={handlePromptSubmit}
+            isSubmitting={isSubmitting}
+          />
         </div>
       )}
     </div>
