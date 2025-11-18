@@ -17,8 +17,6 @@ function GameNavigation({
     });
   });
 
-  if (gameId) return null;
-
   return (
     <div className="game-navigation">
       <button

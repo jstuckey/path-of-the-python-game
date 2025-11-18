@@ -109,12 +109,14 @@ function App() {
   return (
     <div className="App">
       <a href="/"><h1>Path of the Python</h1></a>
-      <GameNavigation
-        gameId={gameId}
-        onNewGame={handleNewGame}
-        onResumeGame={handleResumeGame}
-        onShowSavedGames={handleShowSavedGames}
-      />
+      {!gameId && (
+        <GameNavigation
+          gameId={gameId}
+          onNewGame={handleNewGame}
+          onResumeGame={handleResumeGame}
+          onShowSavedGames={handleShowSavedGames}
+        />
+      )}
       {showSavedGames && (
         <SavedGames
           savedGames={savedGames}
