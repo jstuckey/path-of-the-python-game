@@ -4,10 +4,9 @@ import GameNavigation from './GameNavigation';
 import SavedGames from './SavedGames';
 import Messages from './Messages';
 import PromptInput from './PromptInput';
+import gameService from './gameService';
 
 function App() {
-  const backendUrl = process.env.REACT_APP_BACKEND_URL
-
   const [gameId, setGameId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [savedGames, setSavedGames] = useState(() => {
@@ -25,12 +24,8 @@ function App() {
     setMessages([{ id: 'waiting', role: 'waiting', text: '...' }])
     setIsSubmitting(true);
 
-    const response = await fetch(`${backendUrl}/games`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
-    })
+    const data = await gameService.createGame();
 
-    const data = await response.json();
     setGameId(data.id)
     setMessages([{ id: data.turn_id, role: 'game', text: data.reply }])
 
@@ -63,12 +58,7 @@ function App() {
     setMessages([{ id: 'waiting', role: 'waiting', text: '...' }])
     setIsSubmitting(true);
 
-    const response = await fetch(`${backendUrl}/games/${savedGameId}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    })
-
-    const data = await response.json();
+    const data = await gameService.loadGame(savedGameId);
 
     setGameId(savedGameId)
     setMessages(data.messages);
@@ -86,8 +76,7 @@ function App() {
 
     setIsSubmitting(true);
 
-    const response = await fetch(`${backendUrl}/games/${gameId}/turn?prompt=${promptText}`, { method: 'POST' });
-    const data = await response.json();
+    const data = await gameService.submitTurn(gameId, promptText);
 
     const gameMessage = { id: data.turn_id, role: 'game', text: data.reply };
     setMessages((currentMessages) => [...currentMessages.slice(0, -1), gameMessage]);
